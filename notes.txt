@@ -1,0 +1,26 @@
+A bunch of websites have EDMC plugins to get more journal data and tie it to users and such, a standard interface where the user just copy pastes a url and an access token and everything configures itself would be pretty neat to simplify that
+
+With this idea, if I wanted to add EDSM, I would do the following:
+* Copy a url, for example edsm.com/datasubmission.
+* Give that to EDMC, EDDiscovery, etc.
+* It would load the config from that url, and see how to authenticate and such, then ask me for the needed info
+* EDMC can then submit the information to EDSM, without me installing any kind of plugin or changing any file. EVerything is in the UI
+
+
+
+
+Would need:
+* Filtering events and journal types.
+* Batching (send everything every x seconds/x jumps/session)
+* Auth schemas, maybe also have a session key generated when game or client starts?
+
+* Some kind of aggregation?
+
+
+
+
+
+
+Other idea:
+* Central plugin repository for EDMC, and support those in other clients too.
+
