@@ -1,0 +1,233 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the API interface for the ED Data Uniform Journal Api. Any website that wishes to receive data using our standard must implement the API as specified in the Github repository. The API endpoints are described here, however several aspects are not.",
+    "version": "1.0.0",
+    "title": "ED Data Uniform Journal Api"
+  },
+  "host": "api.example.com",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "ED data",
+      "description": "ED Journal data ingest api"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/eddata": {
+      "get": {
+        "tags": [
+          "ED data"
+        ],
+        "summary": "Fetch the relevant configuration for this UJA implementation.",
+        "description": "",
+        "operationId": "apiConfiguration",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration",
+            "schema": {
+              "$ref": "#/definitions/Settings"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ED data"
+        ],
+        "summary": "Upload one or more journals.",
+        "description": "",
+        "operationId": "uploadJournals",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-UJA-Application-Name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X-UJA-Application-Version",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON array of journals requested by the service.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JournalList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "With parsing response for every journal.",
+            "schema": {
+              "$ref": "#/definitions/IngestResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Settings": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "The version of UJA supported by this implementation. Must be 1.0",
+          "enum": [
+            "1.0"
+          ]
+        },
+        "authentication": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "description": "See Github repo for list of possible values."
+            },
+            "data": {
+              "type": "string",
+              "description": "An additional data string. See Github repo for how this should be read and used."
+            }
+          }
+        },
+        "batching": {
+          "type": "object",
+          "description": "Some interval must be set if active is true.",
+          "required": [
+            "active"
+          ],
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "timeInterval": {
+              "type": "integer",
+              "format": "int64",
+              "description": "The number of seconds between each time any new events should be sent."
+            },
+            "jumpInterval": {
+              "type": "integer",
+              "format": "int32",
+              "description": "The number of jumps the user can perform before any new events should be sent."
+            }
+          }
+        },
+        "sendJournalEvents": {
+          "type": "array",
+          "description": "List of journal event types the client shall send.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sendCommodities": {
+          "type": "boolean"
+        },
+        "sendOutfitting": {
+          "type": "boolean"
+        },
+        "sendShipyard": {
+          "type": "boolean"
+        },
+        "sendBlackMarket": {
+          "type": "boolean"
+        },
+        "sendStatus": {
+          "type": "object",
+          "required": [
+            "active"
+          ],
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "interval": {
+              "type": "integer",
+              "format": "int64",
+              "description": "The number of seconds between each time the status is sent. This will ignore other batching settings. Required if sendStatus is true."
+            }
+          }
+        }
+      }
+    },
+    "IngestResponse": {
+      "type": "object",
+      "properties": {
+        "successful": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Number of events read successfully."
+        },
+        "failed": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Number of that failed to be read. This should not include irrelevant events."
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "info",
+                  "warning",
+                  "error"
+                ]
+              },
+              "info": {
+                "type": "string",
+                "description": "Description of the response message. Should include relevant info, such as event type and similar."
+              }
+            }
+          }
+        }
+      }
+    },
+    "JournalList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "journal",
+              "commodities",
+              "outfitting",
+              "shipyard",
+              "blackmarket",
+              "status"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "description": "The journal object, as descriped in the Github repository."
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
