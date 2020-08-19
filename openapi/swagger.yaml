@@ -164,6 +164,7 @@ definitions:
         data:
           type: "object"
           description: "The journal object, as descriped in the Github repository."
+          
 externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+  description: "More about Uniform Journal Api"
+  url: "https://github.com/HumaneWolf/eddata-uja"
